@@ -12,7 +12,7 @@ import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
 import type { AiMeta, Profile, ScriptResponse } from "@/lib/types";
 
-const CALL_NUMBER = "+919999999999"; // "Kumar" — supporter hotline demo
+const CALL_NUMBER = "+919500756675"; // "Kumar" — the user's real supporter contact
 
 export default function SosPage() {
   const { profile, ready } = useProfile();
