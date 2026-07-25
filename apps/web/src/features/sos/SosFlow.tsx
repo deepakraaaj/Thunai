@@ -26,9 +26,33 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
     synthRef.current.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = langCode === "ta" ? "ta-IN" : "en-US";
-    utterance.rate = 0.9;
+    utterance.lang = langCode === "ta" ? "ta-IN" : "en-IN";
+    utterance.rate = 0.88; // Calm, empathetic pacing
     utterance.pitch = 1.0;
+
+    // Smart Native Voice Selection Algorithm
+    const voices = synthRef.current.getVoices();
+    if (voices && voices.length > 0) {
+      if (langCode === "ta") {
+        const tamilVoice = voices.find(
+          (v) =>
+            v.lang.toLowerCase().startsWith("ta") ||
+            v.name.toLowerCase().includes("tamil") ||
+            v.name.toLowerCase().includes("valluvar") ||
+            v.name.toLowerCase().includes("lekha")
+        );
+        if (tamilVoice) utterance.voice = tamilVoice;
+      } else {
+        const inEngVoice = voices.find(
+          (v) =>
+            v.lang.toLowerCase() === "en-in" ||
+            v.name.toLowerCase().includes("india") ||
+            v.name.toLowerCase().includes("rishi") ||
+            v.name.toLowerCase().includes("neerja")
+        );
+        if (inEngVoice) utterance.voice = inEngVoice;
+      }
+    }
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
@@ -42,6 +66,13 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
     let isMounted = true;
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       synthRef.current = window.speechSynthesis;
+
+      // Ensure voices are loaded asynchronously in Chrome/Android
+      if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => {
+          synthRef.current = window.speechSynthesis;
+        };
+      }
     }
 
     async function loadSos() {
@@ -137,7 +168,7 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <span className="flex items-center gap-2 text-sm font-bold text-teal-300">
                 <Heart className="h-5 w-5 text-teal-400 fill-teal-400/30" />
-                Live Guidance ({response?.language === "ta" ? "Tamil" : "English"})
+                Live Guidance ({response?.language === "ta" ? "Native Tamil (ta-IN)" : "Indian English"})
               </span>
               <button
                 onClick={toggleSpeech}
