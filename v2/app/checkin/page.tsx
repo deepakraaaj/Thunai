@@ -71,7 +71,11 @@ function Checkin({ profile }: { profile: Profile }) {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-display text-2xl font-semibold text-slate-50">
+        <h1
+          className={`text-2xl font-semibold text-slate-50 ${
+            profile.language === "en" ? "font-display" : "font-tamil"
+          }`}
+        >
           {t("checkIn", profile.language)}
         </h1>
       </header>
@@ -86,7 +90,11 @@ function Checkin({ profile }: { profile: Profile }) {
               exit={{ opacity: 0, y: -12 }}
               className="flex flex-col items-center text-center"
             >
-              <p className="mb-8 font-display text-2xl text-slate-100">
+              <p
+                className={`mb-8 text-2xl text-slate-100 ${
+                  profile.language === "en" ? "font-display" : "font-tamil"
+                }`}
+              >
                 {t("holdToTalk", profile.language)}
               </p>
 
