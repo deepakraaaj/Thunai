@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --base: #0a0f1a;
+  --surface: #111827;
+  --teal: #2dd4bf;
+  --lavender: #a78bfa;
+}
+
+html,
+body {
+  background: var(--base);
+  color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+  overscroll-behavior-y: none;
+}
+
+/* Inter tight tracking for UI */
+.font-sans {
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a3444 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2a3444;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Focus ring — styled, visible, on-brand */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* The breathing orb — 6s inhale/exhale */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(0.92);
+    filter: brightness(0.92);
+  }
+  50% {
+    transform: scale(1.06);
+    filter: brightness(1.12);
+  }
+}
+
+.orb-breathe {
+  animation: breathe 6s ease-in-out infinite;
+}
+
+@keyframes glowpulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.12);
+  }
+}
+.orb-glow {
+  animation: glowpulse 6s ease-in-out infinite;
+}
+
+/* Count-up numbers use Fraunces */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Content-shaped skeleton shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, #1a2233 25%, #232d42 50%, #1a2233 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb-breathe,
+  .orb-glow,
+  .skeleton {
+    animation: none !important;
+  }
+}
