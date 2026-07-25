@@ -1,0 +1,11 @@
+{
+  "name": "@anchor/contracts",
+  "version": "0.1.0",
+  "description": "Anchor shared cross-lane contract types (FROZEN after 0:45).",
+  "type": "module",
+  "main": "./types.ts",
+  "types": "./types.ts",
+  "exports": {
+    ".": "./types.ts"
+  }
+}
