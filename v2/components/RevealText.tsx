@@ -33,7 +33,9 @@ export default function RevealText({
       setShown(i);
       if (i >= words.length) clearInterval(id);
     }, perWordMs);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
 

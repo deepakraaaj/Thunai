@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, Anek_Tamil, Anek_Devanagari } from "next/font/google";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 
 const fraunces = Fraunces({
   subsets: ["latin"],

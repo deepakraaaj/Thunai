@@ -123,7 +123,7 @@ export interface SwapResponse {
   meta: AiMeta;
 }
 
-export type EventType = "sos" | "checkin" | "slip" | "swap" | "okay";
+export type EventType = "sos" | "nearby-risk" | "checkin" | "slip" | "swap" | "okay";
 
 export interface AnchorEvent {
   id: string;

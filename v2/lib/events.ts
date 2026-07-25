@@ -48,8 +48,12 @@ export async function logEvent(
   if (isSupabaseConfigured()) {
     try {
       const sb = getSupabase();
-      await sb?.from("events").insert({ type, user_name: userName, payload });
-      return;
+      const { error } = (await sb?.from("events").insert({
+        type,
+        user_name: userName,
+        payload,
+      })) ?? { error: new Error("supabase_unavailable") };
+      if (!error) return;
     } catch {
       // fall through to local echo
     }
@@ -107,5 +111,7 @@ export function subscribeEvents(
     if (evt.user_name === userName) onNew(evt);
   };
   window.addEventListener(BUS, handler);
-  return () => window.removeEventListener(BUS, handler);
+  return () => {
+    window.removeEventListener(BUS, handler);
+  };
 }

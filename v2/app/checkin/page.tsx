@@ -34,7 +34,11 @@ function Checkin({ profile }: { profile: Profile }) {
   const [phase, setPhase] = useState<"speak" | "loading" | "done">("speak");
   const [result, setResult] = useState<CheckinResponse | null>(null);
 
-  useEffect(() => () => stopSpeaking(), []);
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
 
   async function submit() {
     stop();

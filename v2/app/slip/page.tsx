@@ -47,7 +47,9 @@ function Slip({ profile }: { profile: Profile }) {
         });
       }
     })();
-    return () => stopSpeaking();
+    return () => {
+      stopSpeaking();
+    };
   }, [profile]);
 
   const whatsappNumber = profile.supporterPhone?.replace(/\D/g, "");

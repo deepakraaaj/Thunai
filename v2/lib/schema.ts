@@ -56,9 +56,27 @@ export const ttsSchema = z.object({
 });
 
 export const eventSchema = z.object({
-  type: z.enum(["sos", "checkin", "slip", "swap", "okay"]),
+  type: z.enum(["sos", "nearby-risk", "checkin", "slip", "swap", "okay"]),
   user_name: z.string().min(1).max(40),
   payload: z.record(z.unknown()).optional(),
+});
+
+export const conversationSchema = z.object({
+  profile: profileSchema,
+  message: z.string().min(1).max(600),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        text: z.string().min(1).max(600),
+      }),
+    )
+    .max(8),
+});
+
+export const nearbySchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
 });
 
 export type ProfileInput = z.infer<typeof profileSchema>;

@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { HeartHandshake, MessageCircle, Zap } from "lucide-react";
+import { HeartHandshake, MessageCircle, MessagesSquare, Zap } from "lucide-react";
 import Orb from "@/components/Orb";
 import CountUp from "@/components/CountUp";
+import RecoveryImpact from "@/components/RecoveryImpact";
+import NearbySupport from "@/components/NearbySupport";
 import { useProfile } from "@/lib/use-profile";
 import { daysInRecovery, rupeesSaved } from "@/lib/profile-store";
 import { t } from "@/lib/copy";
@@ -118,8 +120,12 @@ function HomeView({
         </div>
       </motion.div>
 
+      <RecoveryImpact profile={profile} />
+      <NearbySupport profile={profile} />
+
       {/* secondary actions */}
-      <div className="mt-4 grid grid-cols-3 gap-3">
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <ActionButton icon={<MessagesSquare size={18} />} label="Talk now" onClick={() => router.push("/conversation")} />
         <ActionButton icon={<MessageCircle size={18} />} label={t("checkIn", lang)} onClick={() => router.push("/checkin")} />
         <ActionButton icon={<Zap size={18} />} label={t("cravingHit", lang)} onClick={() => router.push("/swap")} />
         <ActionButton icon={<HeartHandshake size={18} />} label={t("iSlipped", lang)} onClick={() => router.push("/slip")} />

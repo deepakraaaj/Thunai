@@ -60,7 +60,9 @@ function Sos({ profile }: { profile: Profile }) {
       }
     })();
 
-    return () => stopSpeaking();
+    return () => {
+      stopSpeaking();
+    };
   }, [profile]);
 
   async function onOkay() {

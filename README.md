@@ -1,12 +1,32 @@
-# Anchor
+# Thunai / Sahara
 
-**v2/ is the application.** See [v2/README.md](v2/README.md).
+**A multilingual, location-aware recovery companion for the moment a craving
+hits.**
 
-- **[v2/](v2/)** — **Anchor**, the real app: a single Next.js app, zero-typing
-  crisis support for substance-use recovery in the user's own language. This is
-  what gets deployed and evaluated.
-- **[reference/](reference/)** — earlier warm-up / exploration kept aside for
-  reference only (an earlier lane-based monorepo: `reference/apps/*`,
-  `reference/packages/*`). Not part of the submission and not deployed.
+The production application is in [`v2/`](v2/). Read the complete
+[project overview, architecture, features, setup and demo guide](v2/README.md).
 
-> Deploy note: set the Vercel **Root Directory** to `v2`.
+## What makes it different
+
+- One-tap SOS with live, spoken AI support.
+- Natural multilingual conversation: English, Tamil, Tanglish, Hindi and
+  Hinglish.
+- **Thunai** identity normally; **Sahara** in Hindi modes.
+- Open-source Leaflet/OpenStreetMap wine-shop proximity intervention.
+- Dynamic savings and health-momentum visualization.
+- Supabase two-user realtime caregiver alerts.
+- Caregiver sound, vibration and browser notifications.
+- Compassionate slip support and WhatsApp escalation.
+- Secure validation, rate limiting, prompt sanitization and honest offline
+  fallbacks.
+
+## Live demo
+
+https://web-three-nu-14.vercel.app
+
+## Repository structure
+
+- [`v2/`](v2/) — the application that is built, deployed and evaluated.
+- `reference/` — earlier exploration retained only as reference; not deployed.
+
+> Vercel Root Directory: `v2`

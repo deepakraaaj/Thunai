@@ -58,7 +58,9 @@ function Swap({ profile }: { profile: Profile }) {
         });
       }
     })();
-    return () => stopSpeaking();
+    return () => {
+      stopSpeaking();
+    };
   }, [profile]);
 
   const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
