@@ -1,5 +1,5 @@
 // =============================================================================
-// types.ts — Shared domain types for Anchor v2.
+// types.ts — Shared domain types for Thunai / Sahara v2.
 // The Profile lives entirely in localStorage (no auth). Everything the AI needs
 // about a person is here; API routes receive a sanitized copy of it.
 // =============================================================================
@@ -47,6 +47,11 @@ export function localeFor(lang: Language): "en-IN" | "ta-IN" | "hi-IN" {
   }
 }
 
+/** User-facing brand: Sahara in Hindi modes, Thunai everywhere else. */
+export function brandName(lang: Language): "Thunai" | "Sahara" {
+  return lang === "hi" || lang === "hinglish" ? "Sahara" : "Thunai";
+}
+
 export type Substance = "Alcohol" | "Tobacco" | "Drugs" | "Something else";
 
 export type Stage = "just-starting" | "few-weeks" | "few-months" | "six-plus";
@@ -79,6 +84,8 @@ export interface Profile {
   trigger: Trigger;
   doingItFor: DoingItFor;
   lovedOneName?: string;
+  supporterName?: string;
+  supporterPhone?: string;
   dailySpend: number; // rupees/day
   desire: Desire;
   language: Language;

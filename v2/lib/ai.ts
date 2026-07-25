@@ -13,8 +13,9 @@
 import "server-only";
 import type { AiMeta } from "./types";
 
-const PER_ATTEMPT_TIMEOUT_MS = 8000;
-const BACKOFFS_MS = [400, 900]; // 2 retries after the first try
+const PER_ATTEMPT_TIMEOUT_MS = 4500;
+const BACKOFFS_MS = [250]; // one quick retry; crisis support must not wait tens of seconds
+const GEMINI_STAGGER_MS = 500;
 
 export interface GenResult {
   text: string;
@@ -227,23 +228,20 @@ async function callGemini(system: string, user: string): Promise<GenResult> {
  */
 export async function generateText(system: string, user: string): Promise<GenResult> {
   const started = Date.now();
+  const geminiStaggered = (async () => {
+    await sleep(GEMINI_STAGGER_MS);
+    return callGemini(system, user);
+  })();
+
   try {
-    return await callCerebras(system, user);
-  } catch (cerebrasErr) {
+    return await Promise.any([callCerebras(system, user), geminiStaggered]);
+  } catch (aggregate) {
     console.warn(
-      `[ai] cerebras failed after ${Date.now() - started}ms:`,
-      cerebrasErr instanceof Error ? cerebrasErr.message : cerebrasErr,
+      `[ai] all providers failed after ${Date.now() - started}ms`,
+      aggregate instanceof Error ? aggregate.message : "provider_failure",
     );
+    throw new AllProvidersFailedError();
   }
-  try {
-    return await callGemini(system, user);
-  } catch (geminiErr) {
-    console.warn(
-      "[ai] gemini failover failed:",
-      geminiErr instanceof Error ? geminiErr.message : geminiErr,
-    );
-  }
-  throw new AllProvidersFailedError();
 }
 
 /** Build the offline meta for a labeled pre-written fallback. */

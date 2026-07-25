@@ -1,10 +1,10 @@
-# Anchor
+# Thunai / Sahara
 
 **Zero-typing crisis support for substance-use recovery — in your own language.**
 
-Anchor is a web-only, mobile-first companion for people recovering from a
+Thunai—shown as **Sahara** in Hindi modes—is a web-only, mobile-first companion for people recovering from a
 substance-use habit and the people who care for them. When a craving hits, you
-press one breathing circle and Anchor generates a warm, in-the-moment coping
+press one breathing circle and Thunai/Sahara generates a warm, in-the-moment coping
 script — **live, at that moment**, in your own language (Tamil / English / mix) —
 and speaks it aloud. No forms, no typing (except your name once), no shame.
 
@@ -16,7 +16,7 @@ and speaks it aloud. No forms, no typing (except your name once), no shame.
 
 ## Problem statement → feature
 
-| Statement phrase | How Anchor answers it |
+| Statement phrase | How Thunai/Sahara answers it |
 |---|---|
 | *In-the-moment crisis support* | The breathing **orb** IS the SOS button. One press → live coping script, spoken aloud, word-by-word. |
 | *In the user's own language* | Tamil / English / natural Tanglish, chosen at onboarding; scripts + voice both localized. |

@@ -10,6 +10,7 @@ import { useProfile } from "@/lib/use-profile";
 import { fetchEvents, subscribeEvents } from "@/lib/events";
 import { relativeTime } from "@/lib/relative-time";
 import type { AiMeta, AnchorEvent, EventType, Profile } from "@/lib/types";
+import { postJson } from "@/lib/api-client";
 
 const EVENT_META: Record<EventType, { icon: React.ReactNode; label: string; tone: string }> = {
   sos: { icon: <Bell size={16} />, label: "Pressed SOS", tone: "text-teal" },
@@ -65,12 +66,10 @@ function Caregiver({ profile }: { profile: Profile }) {
     setLoadingCoach(true);
     setCoaching(null);
     try {
-      const res = await fetch("/api/caregiver-script", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile }),
-      });
-      const data = (await res.json()) as { text: string; meta: AiMeta };
+      const data = await postJson<{ text: string; meta: AiMeta }>(
+        "/api/caregiver-script",
+        { profile },
+      );
       setCoaching(data);
     } catch {
       setCoaching({

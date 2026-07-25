@@ -12,6 +12,7 @@ import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
 import { t } from "@/lib/copy";
 import { fontClassFor, type CheckinResponse, type Profile } from "@/lib/types";
+import { postJson } from "@/lib/api-client";
 
 const TELE_MANAS = "14416";
 
@@ -40,12 +41,10 @@ function Checkin({ profile }: { profile: Profile }) {
     if (!transcript.trim()) return;
     setPhase("loading");
     try {
-      const res = await fetch("/api/checkin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile, transcript: transcript.trim() }),
+      const data = await postJson<CheckinResponse>("/api/checkin", {
+        profile,
+        transcript: transcript.trim(),
       });
-      const data = (await res.json()) as CheckinResponse;
       setResult(data);
       setPhase("done");
       void logEvent("checkin", profile.name, { mood: data.mood });
@@ -77,6 +76,7 @@ function Checkin({ profile }: { profile: Profile }) {
       </header>
 
       <div className="flex flex-1 flex-col justify-center">
+        <div aria-live="polite" aria-busy={phase === "loading"}>
         <AnimatePresence mode="wait">
           {phase === "speak" && (
             <motion.div
@@ -180,6 +180,7 @@ function Checkin({ profile }: { profile: Profile }) {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
     </main>
   );

@@ -11,8 +11,7 @@ import { useProfile } from "@/lib/use-profile";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
 import { fontClassFor, type AiMeta, type Profile, type ScriptResponse } from "@/lib/types";
-
-const CALL_NUMBER = "+919500756675"; // "Kumar" — the user's real supporter contact
+import { postJson } from "@/lib/api-client";
 
 export default function SosPage() {
   const { profile, ready } = useProfile();
@@ -34,6 +33,8 @@ function Sos({ profile }: { profile: Profile }) {
   const [meta, setMeta] = useState<AiMeta | null>(null);
   const [closing, setClosing] = useState<{ text: string; meta: AiMeta } | null>(null);
   const started = useRef(false);
+  const supporterPhone = profile.supporterPhone?.replace(/[^\d+]/g, "");
+  const supporterName = profile.supporterName || profile.lovedOneName || "supporter";
 
   useEffect(() => {
     if (started.current) return;
@@ -43,15 +44,13 @@ function Sos({ profile }: { profile: Profile }) {
 
     (async () => {
       try {
-        const res = await fetch("/api/sos", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            profile,
-            localTime: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        const data = await postJson<ScriptResponse>("/api/sos", {
+          profile,
+          localTime: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
           }),
         });
-        const data = (await res.json()) as ScriptResponse;
         setScript(data.text);
         setMeta(data.meta);
         void speak(data.text, profile.language);
@@ -68,12 +67,7 @@ function Sos({ profile }: { profile: Profile }) {
     stopSpeaking();
     void logEvent("okay", profile.name, {});
     try {
-      const res = await fetch("/api/okay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile }),
-      });
-      const data = (await res.json()) as ScriptResponse;
+      const data = await postJson<ScriptResponse>("/api/okay", { profile });
       setClosing(data);
       void speak(data.text, profile.language);
       setTimeout(() => router.replace("/home"), 3200);
@@ -111,7 +105,7 @@ function Sos({ profile }: { profile: Profile }) {
           </motion.div>
         ) : (
           <>
-            <div className="min-h-[160px]">
+            <div className="min-h-[160px]" aria-live="polite" aria-busy={!script}>
               {!script || !meta ? (
                 <Skeleton lines={4} />
               ) : (
@@ -128,12 +122,14 @@ function Sos({ profile }: { profile: Profile }) {
             </div>
 
             <div className="mt-10 space-y-3">
-              <a
-                href={`tel:${CALL_NUMBER}`}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-surface py-5 text-lg font-semibold text-slate-50 shadow-float active:scale-[0.98]"
-              >
-                <Phone size={20} className="text-teal" /> Call Kumar
-              </a>
+              {supporterPhone && (
+                <a
+                  href={`tel:${supporterPhone}`}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-surface py-5 text-lg font-semibold text-slate-50 shadow-float active:scale-[0.98]"
+                >
+                  <Phone size={20} className="text-teal" /> Call {supporterName}
+                </a>
+              )}
               <button
                 onClick={onOkay}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-teal to-lavender py-5 text-lg font-semibold text-base shadow-glow active:scale-[0.98]"

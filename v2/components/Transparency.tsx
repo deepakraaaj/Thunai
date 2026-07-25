@@ -13,7 +13,7 @@ import { t } from "@/lib/copy";
 export default function Transparency({ meta, lang }: { meta: AiMeta; lang: Language }) {
   if (meta.isOfflineFallback) {
     return (
-      <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber/10 px-3 py-1 text-xs font-medium text-amber">
+      <p role="status" className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber/10 px-3 py-1 text-xs font-medium text-amber">
         <ShieldCheck size={13} aria-hidden />
         {t("offlineBadge", lang)}
       </p>

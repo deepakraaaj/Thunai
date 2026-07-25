@@ -10,7 +10,14 @@ export function useProfile(): { profile: Profile | null; ready: boolean } {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setProfile(loadProfile());
+    const storedProfile = loadProfile();
+    setProfile(storedProfile);
+    document.documentElement.lang =
+      storedProfile?.language === "hi" || storedProfile?.language === "hinglish"
+        ? "hi"
+        : storedProfile?.language === "ta" || storedProfile?.language === "tanglish"
+          ? "ta"
+          : "en";
     setReady(true);
   }, []);
 

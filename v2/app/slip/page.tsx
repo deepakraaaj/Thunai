@@ -12,6 +12,7 @@ import { daysInRecovery } from "@/lib/profile-store";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
 import { fontClassFor, type Profile, type SlipResponse } from "@/lib/types";
+import { postJson } from "@/lib/api-client";
 
 export default function SlipPage() {
   const { profile, ready } = useProfile();
@@ -35,12 +36,7 @@ function Slip({ profile }: { profile: Profile }) {
     void logEvent("slip", profile.name, {});
     (async () => {
       try {
-        const res = await fetch("/api/slip", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ profile }),
-        });
-        const data = (await res.json()) as SlipResponse;
+        const data = await postJson<SlipResponse>("/api/slip", { profile });
         setResult(data);
         void speak(data.text, profile.language);
       } catch {
@@ -54,8 +50,9 @@ function Slip({ profile }: { profile: Profile }) {
     return () => stopSpeaking();
   }, [profile]);
 
+  const whatsappNumber = profile.supporterPhone?.replace(/\D/g, "");
   const waHref = result
-    ? `https://wa.me/?text=${encodeURIComponent(result.whatsappDraft)}`
+    ? `https://wa.me/${whatsappNumber ?? ""}?text=${encodeURIComponent(result.whatsappDraft)}`
     : "#";
 
   return (

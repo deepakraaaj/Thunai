@@ -9,13 +9,18 @@
 import { getSupabase, isSupabaseConfigured } from "./supabase";
 import type { AnchorEvent, EventType } from "./types";
 
-const LOCAL_KEY = "anchor.events.v1";
-const BUS = "anchor:event";
+const LOCAL_KEY = "thunai.events.v2";
+const LEGACY_KEY = "anchor.events.v1";
+const BUS = "thunai:event";
 
 function readLocal(): AnchorEvent[] {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(window.localStorage.getItem(LOCAL_KEY) ?? "[]") as AnchorEvent[];
+    const raw =
+      window.localStorage.getItem(LOCAL_KEY) ??
+      window.localStorage.getItem(LEGACY_KEY) ??
+      "[]";
+    return JSON.parse(raw) as AnchorEvent[];
   } catch {
     return [];
   }
@@ -23,6 +28,7 @@ function readLocal(): AnchorEvent[] {
 
 function writeLocal(events: AnchorEvent[]): void {
   window.localStorage.setItem(LOCAL_KEY, JSON.stringify(events.slice(0, 100)));
+  window.localStorage.removeItem(LEGACY_KEY);
 }
 
 /** Record an event. Best-effort: never throws into the UI. */

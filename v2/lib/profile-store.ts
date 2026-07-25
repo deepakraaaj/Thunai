@@ -7,12 +7,14 @@
 
 import { STAGE_DAYS, type Profile } from "./types";
 
-const KEY = "anchor.profile.v1";
+const KEY = "thunai.profile.v2";
+const LEGACY_KEY = "anchor.profile.v1";
 
 export function loadProfile(): Profile | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(KEY);
+    const raw =
+      window.localStorage.getItem(KEY) ?? window.localStorage.getItem(LEGACY_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as Profile;
   } catch {
@@ -23,11 +25,13 @@ export function loadProfile(): Profile | null {
 export function saveProfile(p: Profile): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(KEY, JSON.stringify(p));
+  window.localStorage.removeItem(LEGACY_KEY);
 }
 
 export function clearProfile(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(KEY);
+  window.localStorage.removeItem(LEGACY_KEY);
 }
 
 /** Total days in recovery = seeded start days + days elapsed since profile made. */
@@ -52,6 +56,7 @@ export function raviSampleProfile(): Profile {
     trigger: "Work stress",
     doingItFor: "My child",
     lovedOneName: "Ananya",
+    supporterName: "Ananya",
     dailySpend: 525,
     desire: "Good food",
     language: "ta",

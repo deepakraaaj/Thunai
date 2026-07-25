@@ -9,6 +9,7 @@ import Chip from "@/components/Chip";
 import Transparency from "@/components/Transparency";
 import { saveProfile, raviSampleProfile } from "@/lib/profile-store";
 import { speak } from "@/lib/tts";
+import { postJson } from "@/lib/api-client";
 import {
   STAGE_DAYS,
   type Desire,
@@ -78,6 +79,9 @@ export default function Onboarding() {
       trigger: (d.trigger ?? "Evenings") as Trigger,
       doingItFor: (d.doingItFor ?? "Myself") as DoingItFor,
       lovedOneName: d.lovedOneName?.trim().slice(0, 40) || undefined,
+      supporterName: d.supporterName?.trim().slice(0, 40) || undefined,
+      supporterPhone:
+        d.supporterPhone?.replace(/[^\d+]/g, "").slice(0, 16) || undefined,
       dailySpend: Math.round(d.dailySpend ?? 300),
       desire: (d.desire ?? "Saving up") as Desire,
       language: (d.language ?? "en") as Language,
@@ -90,12 +94,10 @@ export default function Onboarding() {
     setStep(TOTAL); // payoff screen
     setLoadingPayoff(true);
     try {
-      const res = await fetch("/api/onboarding-payoff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile }),
-      });
-      const data = (await res.json()) as { text: string; meta: AiMeta };
+      const data = await postJson<{ text: string; meta: AiMeta }>(
+        "/api/onboarding-payoff",
+        { profile },
+      );
       setPayoff(data);
       void speak(data.text, profile.language);
     } catch {
@@ -119,12 +121,10 @@ export default function Onboarding() {
     setStep(TOTAL);
     setLoadingPayoff(true);
     try {
-      const res = await fetch("/api/onboarding-payoff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile }),
-      });
-      const data = (await res.json()) as { text: string; meta: AiMeta };
+      const data = await postJson<{ text: string; meta: AiMeta }>(
+        "/api/onboarding-payoff",
+        { profile },
+      );
       setPayoff(data);
       void speak(data.text, profile.language);
     } catch {
@@ -277,14 +277,32 @@ export default function Onboarding() {
                   />
                 ))}
                 {draft.doingItFor && draft.doingItFor !== "Myself" && (
-                  <input
-                    value={draft.lovedOneName ?? ""}
-                    onChange={(e) => set("lovedOneName", e.target.value)}
-                    placeholder="Their name (optional) — e.g. Ananya"
-                    aria-label="Loved one's name"
-                    maxLength={40}
-                    className="mt-1 w-full rounded-2xl bg-surface px-5 py-3.5 text-base text-slate-50 shadow-float outline-none placeholder:text-slate-500"
-                  />
+                  <>
+                    <input
+                      value={draft.lovedOneName ?? ""}
+                      onChange={(e) => {
+                        set("lovedOneName", e.target.value);
+                        set("supporterName", e.target.value);
+                      }}
+                      placeholder="Their name (optional) — e.g. Ananya"
+                      aria-label="Supporter's name"
+                      maxLength={40}
+                      className="mt-1 w-full rounded-2xl bg-surface px-5 py-3.5 text-base text-slate-50 shadow-float outline-none placeholder:text-slate-500"
+                    />
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      value={draft.supporterPhone ?? ""}
+                      onChange={(e) => set("supporterPhone", e.target.value)}
+                      placeholder="+91 supporter number (optional)"
+                      aria-label="Supporter's phone number"
+                      maxLength={16}
+                      className="mt-1 w-full rounded-2xl bg-surface px-5 py-3.5 text-base text-slate-50 shadow-float outline-none placeholder:text-slate-500"
+                    />
+                    <p className="px-1 text-xs text-slate-500">
+                      Stored only on this device. Used for SOS calls and WhatsApp.
+                    </p>
+                  </>
                 )}
                 <div className="pt-2">
                   <PrimaryButton disabled={!draft.doingItFor} onClick={next}>

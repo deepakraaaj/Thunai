@@ -28,6 +28,8 @@ export const profileSchema = z.object({
   trigger: triggerSchema,
   doingItFor: doingItForSchema,
   lovedOneName: z.string().max(40).optional(),
+  supporterName: z.string().max(40).optional(),
+  supporterPhone: z.string().regex(/^\+?[1-9]\d{7,14}$/).optional(),
   dailySpend: z.number().min(0).max(100000),
   desire: desireSchema,
   language: languageSchema,

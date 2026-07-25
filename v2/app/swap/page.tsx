@@ -10,6 +10,7 @@ import { useProfile } from "@/lib/use-profile";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
 import { fontClassFor, type Desire, type Profile, type SwapResponse } from "@/lib/types";
+import { postJson } from "@/lib/api-client";
 
 /** A real Maps search per desire, so the swap has somewhere to go. */
 function mapsQuery(desire: Desire): string {
@@ -47,12 +48,7 @@ function Swap({ profile }: { profile: Profile }) {
     void logEvent("swap", profile.name, {});
     (async () => {
       try {
-        const res = await fetch("/api/swap", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ profile }),
-        });
-        const data = (await res.json()) as SwapResponse;
+        const data = await postJson<SwapResponse>("/api/swap", { profile });
         setResult(data);
         void speak(data.text, profile.language);
       } catch {
