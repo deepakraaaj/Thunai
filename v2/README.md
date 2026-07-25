@@ -248,9 +248,10 @@ npm test
 npm run build
 ```
 
-The repository includes focused tests for prompt-injection sanitization,
-Thunai/Sahara identity selection, language locales, and supporter-phone
-validation.
+The repository includes 15 focused tests for prompt-injection isolation,
+Thunai/Sahara identity selection, language locales, supporter-phone validation,
+location boundaries, conversation limits, multilingual safety fallbacks, and
+TTS constraints.
 
 ## Demo flow
 
