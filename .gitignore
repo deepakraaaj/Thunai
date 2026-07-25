@@ -1,5 +1,19 @@
+# Secrets & deps
 .env
 .env.local
+.env*
 node_modules/
 dist/
 *.log
+.vercel
+
+# Kept aside locally — earlier warm-up / exploration, NOT part of the repo.
+# The real application lives in v2/ (the only tracked app).
+reference/
+apps/
+packages/
+
+# Coordination scratch docs from the earlier lane-based process (local only).
+STATUS.md
+PROPOSALS.md
+SUBMISSION.md
