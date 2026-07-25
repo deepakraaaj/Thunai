@@ -96,7 +96,8 @@ function Checkin({ profile }: { profile: Profile }) {
                   onMouseUp={stop}
                   onTouchStart={start}
                   onTouchEnd={stop}
-                  aria-label="Hold to talk"
+                  aria-label={listening ? "Listening — release to stop" : "Hold to talk"}
+                  aria-pressed={listening}
                   className={`grid h-40 w-40 place-items-center rounded-full shadow-glow transition-transform active:scale-95 ${
                     listening
                       ? "bg-gradient-to-br from-teal to-lavender orb-breathe"
