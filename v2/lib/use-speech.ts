@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Language } from "./types";
+import { localeFor, type Language } from "./types";
 
 // Minimal typings for the Web Speech API (not in lib.dom for all targets).
 interface SpeechRecognitionAlternative {
@@ -40,7 +40,7 @@ function getCtor(): SpeechRecognitionCtor | null {
 }
 
 function recLang(language: Language): string {
-  return language === "en" ? "en-IN" : "ta-IN";
+  return localeFor(language);
 }
 
 /**

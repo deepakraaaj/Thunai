@@ -11,7 +11,7 @@ import { useProfile } from "@/lib/use-profile";
 import { daysInRecovery } from "@/lib/profile-store";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
-import type { Profile, SlipResponse } from "@/lib/types";
+import { fontClassFor, type Profile, type SlipResponse } from "@/lib/types";
 
 export default function SlipPage() {
   const { profile, ready } = useProfile();
@@ -89,9 +89,9 @@ function Slip({ profile }: { profile: Profile }) {
           ) : (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <p
-                className={`font-display text-xl leading-relaxed text-slate-50 ${
-                  profile.language !== "en" ? "font-tamil" : ""
-                }`}
+                className={`text-xl leading-relaxed text-slate-50 ${fontClassFor(
+                  profile.language,
+                )}`}
               >
                 {result.text}
               </p>

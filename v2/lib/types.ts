@@ -4,7 +4,48 @@
 // about a person is here; API routes receive a sanitized copy of it.
 // =============================================================================
 
-export type Language = "ta" | "en" | "mix";
+export type Language = "en" | "ta" | "hi" | "tanglish" | "hinglish";
+
+/** Which script the UI should render a language's text in (drives font choice). */
+export type ScriptFamily = "latin" | "tamil" | "devanagari";
+
+export function scriptFamily(lang: Language): ScriptFamily {
+  switch (lang) {
+    case "ta":
+      return "tamil"; // pure Tamil script
+    case "hi":
+      return "devanagari"; // pure Hindi script
+    // Tanglish/Hinglish are written in Latin (romanized), so latin renders them.
+    default:
+      return "latin";
+  }
+}
+
+/** Font family class for a language's body/heading text. */
+export function fontClassFor(lang: Language): string {
+  switch (scriptFamily(lang)) {
+    case "tamil":
+      return "font-tamil";
+    case "devanagari":
+      return "font-devanagari";
+    default:
+      return "font-display";
+  }
+}
+
+/** Speech / TTS locale for a language. */
+export function localeFor(lang: Language): "en-IN" | "ta-IN" | "hi-IN" {
+  switch (lang) {
+    case "en":
+      return "en-IN";
+    case "ta":
+    case "tanglish":
+      return "ta-IN";
+    case "hi":
+    case "hinglish":
+      return "hi-IN";
+  }
+}
 
 export type Substance = "Alcohol" | "Tobacco" | "Drugs" | "Something else";
 

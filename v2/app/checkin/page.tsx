@@ -11,7 +11,7 @@ import { useSpeech } from "@/lib/use-speech";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
 import { t } from "@/lib/copy";
-import type { CheckinResponse, Profile } from "@/lib/types";
+import { fontClassFor, type CheckinResponse, type Profile } from "@/lib/types";
 
 const TELE_MANAS = "14416";
 
@@ -71,11 +71,7 @@ function Checkin({ profile }: { profile: Profile }) {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1
-          className={`text-2xl font-semibold text-slate-50 ${
-            profile.language === "en" ? "font-display" : "font-tamil"
-          }`}
-        >
+        <h1 className={`text-2xl font-semibold text-slate-50 ${fontClassFor(profile.language)}`}>
           {t("checkIn", profile.language)}
         </h1>
       </header>
@@ -90,11 +86,7 @@ function Checkin({ profile }: { profile: Profile }) {
               exit={{ opacity: 0, y: -12 }}
               className="flex flex-col items-center text-center"
             >
-              <p
-                className={`mb-8 text-2xl text-slate-100 ${
-                  profile.language === "en" ? "font-display" : "font-tamil"
-                }`}
-              >
+              <p className={`mb-8 text-2xl text-slate-100 ${fontClassFor(profile.language)}`}>
                 {t("holdToTalk", profile.language)}
               </p>
 
@@ -132,7 +124,7 @@ function Checkin({ profile }: { profile: Profile }) {
                 disabled={!transcript.trim()}
                 className="mt-4 w-full rounded-2xl bg-gradient-to-r from-teal to-lavender py-4 text-lg font-semibold text-base shadow-glow transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
               >
-                Share with Anchor
+                Share with {profile.language === "hi" || profile.language === "hinglish" ? "Sahara" : "Thunai"}
               </button>
             </motion.div>
           )}
@@ -154,9 +146,7 @@ function Checkin({ profile }: { profile: Profile }) {
                 <span className="h-2 w-2 rounded-full bg-teal" /> feeling {result.mood}
               </div>
               <p
-                className={`font-display text-xl leading-relaxed text-slate-50 ${
-                  profile.language !== "en" ? "font-tamil" : ""
-                }`}
+                className={`text-xl leading-relaxed text-slate-50 ${fontClassFor(profile.language)}`}
               >
                 {result.reflection}
               </p>

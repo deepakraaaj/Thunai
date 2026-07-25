@@ -175,6 +175,18 @@ export default function Onboarding() {
             {/* Step 1 — name */}
             {step === 0 && (
               <motion.div key="s0" {...fade} className="flex flex-1 flex-col">
+                <div className="mb-8">
+                  <p className="font-display text-4xl font-semibold text-teal">
+                    {lang === "hi" || lang === "hinglish" ? "Sahara" : "Thunai"}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-300">
+                    {lang === "hi" || lang === "hinglish" ? (
+                      <span lang="hi" className="font-devanagari">आपका रिकवरी साथी</span>
+                    ) : (
+                      "Your recovery partner"
+                    )}
+                  </p>
+                </div>
                 <h1 className="font-display text-3xl font-semibold leading-tight text-slate-50">
                   What should I call you?
                 </h1>
@@ -314,12 +326,14 @@ export default function Onboarding() {
                   ))}
                 </div>
                 <div className="rounded-2xl bg-surface p-2 shadow-float">
-                  <div className="grid grid-cols-3 gap-1" role="group" aria-label="Language">
+                  <div className="grid grid-cols-2 gap-1 sm:grid-cols-3" role="group" aria-label="Language">
                     {(
                       [
                         { l: "தமிழ்", v: "ta" },
                         { l: "English", v: "en" },
-                        { l: "Mix", v: "mix" },
+                        { l: "தமிழ் + English", v: "tanglish" },
+                        { l: "हिन्दी", v: "hi" },
+                        { l: "Hindi + English", v: "hinglish" },
                       ] as { l: string; v: Language }[]
                     ).map((o) => (
                       <button
@@ -336,6 +350,14 @@ export default function Onboarding() {
                       </button>
                     ))}
                   </div>
+                  {(lang === "hi" || lang === "hinglish") && (
+                    <div className="mx-1 mt-2 rounded-xl border border-teal/30 bg-teal/10 px-4 py-3 text-center">
+                      <p className="font-display text-xl font-semibold text-teal">Sahara</p>
+                      <p lang="hi" className="mt-1 font-devanagari text-sm text-slate-200">
+                        आपका रिकवरी साथी · हिन्दी मोड चालू है
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="pt-2">
                   <PrimaryButton disabled={!draft.desire} onClick={finish}>

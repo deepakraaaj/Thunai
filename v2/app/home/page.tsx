@@ -9,7 +9,7 @@ import CountUp from "@/components/CountUp";
 import { useProfile } from "@/lib/use-profile";
 import { daysInRecovery, rupeesSaved } from "@/lib/profile-store";
 import { t } from "@/lib/copy";
-import type { Profile } from "@/lib/types";
+import { fontClassFor, type Profile } from "@/lib/types";
 
 export default function Home() {
   const { profile, ready } = useProfile();
@@ -84,9 +84,7 @@ function HomeView({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className={`mt-8 text-center font-display text-3xl font-semibold text-slate-50 ${
-          lang !== "en" ? "font-tamil" : ""
-        }`}
+        className={`mt-8 text-center text-3xl font-semibold text-slate-50 ${fontClassFor(lang)}`}
       >
         {greeting}
       </motion.h1>

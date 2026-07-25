@@ -20,6 +20,7 @@ const config: Config = {
         display: ["var(--font-fraunces)", "serif"],
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
         tamil: ["var(--font-anek-tamil)", "sans-serif"],
+        devanagari: ["var(--font-anek-devanagari)", "sans-serif"],
       },
       boxShadow: {
         depth: "0_8px_40px_rgba(0,0,0,0.45)",

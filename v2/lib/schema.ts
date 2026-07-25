@@ -6,7 +6,7 @@
 
 import { z } from "zod";
 
-export const languageSchema = z.enum(["ta", "en", "mix"]);
+export const languageSchema = z.enum(["en", "ta", "hi", "tanglish", "hinglish"]);
 export const substanceSchema = z.enum(["Alcohol", "Tobacco", "Drugs", "Something else"]);
 export const stageSchema = z.enum(["just-starting", "few-weeks", "few-months", "six-plus"]);
 export const triggerSchema = z.enum([
@@ -50,7 +50,7 @@ export const checkinSchema = z.object({
 
 export const ttsSchema = z.object({
   text: z.string().min(1).max(1200),
-  targetLanguageCode: z.enum(["ta-IN", "en-IN"]),
+  targetLanguageCode: z.enum(["ta-IN", "en-IN", "hi-IN"]),
 });
 
 export const eventSchema = z.object({

@@ -1,8 +1,8 @@
 {
-  "name": "anchor",
+  "name": "thunai",
   "version": "1.0.0",
   "private": true,
-  "description": "Anchor — zero-typing crisis support for substance-use recovery, in your own language.",
+  "description": "Thunai — Sahara in Hindi — recovery support in your own language.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -10,7 +10,7 @@ import Skeleton from "@/components/Skeleton";
 import { useProfile } from "@/lib/use-profile";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
-import type { AiMeta, Profile, ScriptResponse } from "@/lib/types";
+import { fontClassFor, type AiMeta, type Profile, type ScriptResponse } from "@/lib/types";
 
 const CALL_NUMBER = "+919500756675"; // "Kumar" — the user's real supporter contact
 
@@ -118,9 +118,9 @@ function Sos({ profile }: { profile: Profile }) {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                   <RevealText
                     text={script}
-                    className={`font-display text-2xl leading-relaxed text-slate-50 ${
-                      profile.language !== "en" ? "font-tamil" : ""
-                    }`}
+                    className={`text-2xl leading-relaxed text-slate-50 ${fontClassFor(
+                      profile.language,
+                    )}`}
                   />
                   <Transparency meta={meta} lang={profile.language} />
                 </motion.div>

@@ -9,7 +9,7 @@ import Skeleton from "@/components/Skeleton";
 import { useProfile } from "@/lib/use-profile";
 import { speak, stopSpeaking } from "@/lib/tts";
 import { logEvent } from "@/lib/events";
-import type { Desire, Profile, SwapResponse } from "@/lib/types";
+import { fontClassFor, type Desire, type Profile, type SwapResponse } from "@/lib/types";
 
 /** A real Maps search per desire, so the swap has somewhere to go. */
 function mapsQuery(desire: Desire): string {
@@ -90,9 +90,9 @@ function Swap({ profile }: { profile: Profile }) {
           ) : (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <p
-                className={`font-display text-xl leading-relaxed text-slate-50 ${
-                  profile.language !== "en" ? "font-tamil" : ""
-                }`}
+                className={`text-xl leading-relaxed text-slate-50 ${fontClassFor(
+                  profile.language,
+                )}`}
               >
                 {result.text}
               </p>

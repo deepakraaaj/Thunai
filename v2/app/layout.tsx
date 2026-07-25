@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, Anek_Tamil } from "next/font/google";
+import { Fraunces, Inter, Anek_Tamil, Anek_Devanagari } from "next/font/google";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -21,10 +21,16 @@ const anekTamil = Anek_Tamil({
   display: "swap",
 });
 
+const anekDevanagari = Anek_Devanagari({
+  subsets: ["devanagari"],
+  variable: "--font-anek-devanagari",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Anchor",
+  title: "Thunai — Your Recovery Partner",
   description:
-    "Anchor — zero-typing crisis support for substance-use recovery, in your own language.",
+    "Thunai (Sahara in Hindi) — zero-typing recovery support in your own language.",
 };
 
 export const viewport: Viewport = {
@@ -40,7 +46,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${anekTamil.variable}`}>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${inter.variable} ${anekTamil.variable} ${anekDevanagari.variable}`}
+    >
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

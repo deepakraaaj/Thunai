@@ -5,10 +5,10 @@
 
 "use client";
 
-import type { Language } from "./types";
+import { localeFor, type Language } from "./types";
 
-function ttsLang(language: Language): "ta-IN" | "en-IN" {
-  return language === "en" ? "en-IN" : "ta-IN";
+function ttsLang(language: Language): "ta-IN" | "en-IN" | "hi-IN" {
+  return localeFor(language);
 }
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -56,7 +56,7 @@ export async function speak(text: string, language: Language): Promise<void> {
   browserSpeak(text, target);
 }
 
-function browserSpeak(text: string, target: "ta-IN" | "en-IN"): void {
+function browserSpeak(text: string, target: "ta-IN" | "en-IN" | "hi-IN"): void {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   try {
     const utter = new SpeechSynthesisUtterance(text);
