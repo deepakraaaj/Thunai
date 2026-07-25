@@ -102,4 +102,9 @@ npm run dev                  # http://localhost:3000
 
 ## Deployed URL
 
-_pending — see deploy steps in the handoff._
+**Live:** https://web-three-nu-14.vercel.app
+
+Deployed on Vercel (Root Directory = `v2`, framework Next.js). All provider keys
+and the Supabase pair are set as server-side environment variables in the
+project; `CEREBRAS_MODEL` is left unset so the fastest served model is
+auto-discovered at runtime.
