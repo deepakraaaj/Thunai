@@ -20,17 +20,17 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
   const [breathePhase, setBreathePhase] = useState<"Inhale" | "Hold" | "Exhale">("Inhale");
 
   const synthRef = useRef<SpeechSynthesis | null>(null);
+  const activeAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const speakScript = useCallback((text: string, langCode: string) => {
+  const fallbackSpeechSynthesis = (text: string, langCode: string) => {
     if (!synthRef.current) return;
     synthRef.current.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = langCode === "ta" ? "ta-IN" : "en-IN";
-    utterance.rate = 0.88; // Calm, empathetic pacing
+    utterance.rate = 0.88;
     utterance.pitch = 1.0;
 
-    // Smart Native Voice Selection Algorithm
     const voices = synthRef.current.getVoices();
     if (voices && voices.length > 0) {
       if (langCode === "ta") {
@@ -47,8 +47,7 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
           (v) =>
             v.lang.toLowerCase() === "en-in" ||
             v.name.toLowerCase().includes("india") ||
-            v.name.toLowerCase().includes("rishi") ||
-            v.name.toLowerCase().includes("neerja")
+            v.name.toLowerCase().includes("rishi")
         );
         if (inEngVoice) utterance.voice = inEngVoice;
       }
@@ -59,20 +58,65 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
     utterance.onerror = () => setIsSpeaking(false);
 
     synthRef.current.speak(utterance);
+  };
+
+  const speakScript = useCallback((text: string, langCode: string) => {
+    // Stop any active playing audio or synthesis
+    if (activeAudioRef.current) {
+      activeAudioRef.current.pause();
+      activeAudioRef.current = null;
+    }
+    if (synthRef.current) {
+      synthRef.current.cancel();
+    }
+
+    // Engine 1: Native Tamil Neural Audio Stream (Google TTS API)
+    if (langCode === "ta") {
+      try {
+        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
+          text
+        )}&tl=ta&client=tw-ob`;
+        const audio = new Audio(ttsUrl);
+        audio.playbackRate = 0.92;
+        activeAudioRef.current = audio;
+
+        audio.onplay = () => setIsSpeaking(true);
+        audio.onended = () => setIsSpeaking(false);
+        audio.onerror = () => {
+          console.warn("Audio stream blocked, using fallback synthesis");
+          fallbackSpeechSynthesis(text, langCode);
+        };
+
+        audio.play().catch(() => {
+          fallbackSpeechSynthesis(text, langCode);
+        });
+        return;
+      } catch {
+        fallbackSpeechSynthesis(text, langCode);
+        return;
+      }
+    }
+
+    // Engine 2: Indian English synthesis
+    fallbackSpeechSynthesis(text, langCode);
   }, []);
+
+  const stopAllSpeech = () => {
+    if (activeAudioRef.current) {
+      activeAudioRef.current.pause();
+      activeAudioRef.current = null;
+    }
+    if (synthRef.current) {
+      synthRef.current.cancel();
+    }
+    setIsSpeaking(false);
+  };
 
   // Initialize and call SOS script API on mount
   useEffect(() => {
     let isMounted = true;
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       synthRef.current = window.speechSynthesis;
-
-      // Ensure voices are loaded asynchronously in Chrome/Android
-      if (speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = () => {
-          synthRef.current = window.speechSynthesis;
-        };
-      }
     }
 
     async function loadSos() {
@@ -94,7 +138,7 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
 
     return () => {
       isMounted = false;
-      if (synthRef.current) synthRef.current.cancel();
+      stopAllSpeech();
     };
   }, [user, speakScript]);
 
@@ -114,10 +158,9 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
   }, [activeTab]);
 
   const toggleSpeech = () => {
-    if (!synthRef.current || !response) return;
+    if (!response) return;
     if (isSpeaking) {
-      synthRef.current.cancel();
-      setIsSpeaking(false);
+      stopAllSpeech();
     } else {
       speakScript(response.script, response.language);
     }
@@ -140,7 +183,7 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
         </div>
         <button
           onClick={() => {
-            if (synthRef.current) synthRef.current.cancel();
+            stopAllSpeech();
             onClose();
           }}
           className="rounded-full bg-slate-800 p-2 text-slate-300 hover:bg-slate-700 hover:text-white"
@@ -168,7 +211,7 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <span className="flex items-center gap-2 text-sm font-bold text-teal-300">
                 <Heart className="h-5 w-5 text-teal-400 fill-teal-400/30" />
-                Live Guidance ({response?.language === "ta" ? "Native Tamil (ta-IN)" : "Indian English"})
+                Live Guidance ({response?.language === "ta" ? "Authentic Tamil Audio" : "Indian English"})
               </span>
               <button
                 onClick={toggleSpeech}
