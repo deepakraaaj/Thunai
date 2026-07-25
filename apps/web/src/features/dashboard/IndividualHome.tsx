@@ -1,9 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { UserProfile } from "@contracts/types";
 import { LivingGarden } from "./LivingGarden";
-import { Mic, HeartHandshake, ShieldAlert, IndianRupee, Calendar } from "lucide-react";
+import { UrgeSurfer } from "../tools/UrgeSurfer";
+import { AnchorWall } from "../tools/AnchorWall";
+import { SponsorChat } from "../tools/SponsorChat";
+import { Mic, HeartHandshake, ShieldAlert, IndianRupee, Calendar, Shield, Sparkles, MessageCircle, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -19,6 +22,8 @@ export const IndividualHome: React.FC<Props> = ({
   onOpenCheckin,
   onOpenSlip,
 }) => {
+  const [activeSubTab, setActiveSubTab] = useState<"garden" | "urge" | "anchors" | "chat">("garden");
+
   // Calculate total money saved
   const dailySavings = user.dailyCostInr || 525;
   const totalSaved = user.daysSober * dailySavings;
@@ -45,46 +50,101 @@ export const IndividualHome: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Living Garden Component */}
-      <LivingGarden userName={user.name} daysSober={user.daysSober} />
+      {/* Interactive Tool Navigation Tabs */}
+      <div className="flex rounded-2xl bg-slate-900 p-1 border border-slate-800 gap-1">
+        <button
+          onClick={() => setActiveSubTab("garden")}
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all ${
+            activeSubTab === "garden"
+              ? "bg-teal-500 text-slate-950 shadow-md"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <Sparkles className="h-3.5 w-3.5" /> Garden
+        </button>
 
-      {/* Metric Cards (Sober Days & Rupee Counter) */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Sober Days Card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Total Recovery Days</span>
-            <div className="rounded-full bg-teal-500/10 p-2 text-teal-400">
-              <Calendar className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="mt-2">
-            <span className="text-3xl font-extrabold text-teal-300">{user.daysSober}</span>
-            <span className="ml-1.5 text-xs text-slate-400">days lived</span>
-          </div>
-          <span className="mt-2 text-[11px] text-slate-400">
-            Stage: <strong className="text-slate-200 capitalize">{user.stage}</strong>
-          </span>
-        </div>
+        <button
+          onClick={() => setActiveSubTab("urge")}
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all ${
+            activeSubTab === "urge"
+              ? "bg-teal-500 text-slate-950 shadow-md"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <Shield className="h-3.5 w-3.5" /> De-escalate
+        </button>
 
-        {/* Rupee Savings Card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-400">Saved Toward Goal</span>
-            <div className="rounded-full bg-amber-500/10 p-2 text-amber-400">
-              <IndianRupee className="h-4 w-4" />
-            </div>
-          </div>
-          <div className="mt-2">
-            <span className="text-2xl font-extrabold text-amber-300">
-              ₹{totalSaved.toLocaleString("en-IN")}
-            </span>
-          </div>
-          <span className="mt-2 text-[11px] text-amber-200/80 font-medium truncate">
-            For {user.motivation}
-          </span>
-        </div>
+        <button
+          onClick={() => setActiveSubTab("anchors")}
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all ${
+            activeSubTab === "anchors"
+              ? "bg-teal-500 text-slate-950 shadow-md"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <Heart className="h-3.5 w-3.5" /> Anchors
+        </button>
+
+        <button
+          onClick={() => setActiveSubTab("chat")}
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold transition-all ${
+            activeSubTab === "chat"
+              ? "bg-teal-500 text-slate-950 shadow-md"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <MessageCircle className="h-3.5 w-3.5" /> Chat
+        </button>
       </div>
+
+      {/* Tab Content Rendering */}
+      {activeSubTab === "garden" && (
+        <>
+          <LivingGarden userName={user.name} daysSober={user.daysSober} />
+
+          {/* Metric Cards (Sober Days & Rupee Counter) */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Sober Days Card */}
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-400">Total Recovery Days</span>
+                <div className="rounded-full bg-teal-500/10 p-2 text-teal-400">
+                  <Calendar className="h-4 w-4" />
+                </div>
+              </div>
+              <div className="mt-2">
+                <span className="text-3xl font-extrabold text-teal-300">{user.daysSober}</span>
+                <span className="ml-1.5 text-xs text-slate-400">days lived</span>
+              </div>
+              <span className="mt-2 text-[11px] text-slate-400">
+                Stage: <strong className="text-slate-200 capitalize">{user.stage}</strong>
+              </span>
+            </div>
+
+            {/* Rupee Savings Card */}
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-400">Saved Toward Goal</span>
+                <div className="rounded-full bg-amber-500/10 p-2 text-amber-400">
+                  <IndianRupee className="h-4 w-4" />
+                </div>
+              </div>
+              <div className="mt-2">
+                <span className="text-2xl font-extrabold text-amber-300">
+                  ₹{totalSaved.toLocaleString("en-IN")}
+                </span>
+              </div>
+              <span className="mt-2 text-[11px] text-amber-200/80 font-medium truncate">
+                For {user.motivation}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeSubTab === "urge" && <UrgeSurfer />}
+      {activeSubTab === "anchors" && <AnchorWall user={user} />}
+      {activeSubTab === "chat" && <SponsorChat user={user} />}
 
       {/* ONE HUGE SOS BUTTON */}
       <div className="pt-2">
