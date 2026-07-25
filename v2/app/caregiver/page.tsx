@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Bell, BellRing, HeartHandshake, MapPin, MessageCircle, Zap, Check, X } from "lucide-react";
@@ -9,7 +9,7 @@ import Skeleton from "@/components/Skeleton";
 import { useProfile } from "@/lib/use-profile";
 import { fetchEvents, subscribeEvents } from "@/lib/events";
 import { relativeTime } from "@/lib/relative-time";
-import type { AiMeta, AnchorEvent, EventType, Profile } from "@/lib/types";
+import type { AiMeta, RecoveryEvent, EventType, Profile } from "@/lib/types";
 import { postJson } from "@/lib/api-client";
 import { enableCaregiverAlerts, notifyCaregiver } from "@/lib/caregiver-alerts";
 
@@ -47,7 +47,7 @@ export default function CaregiverPage() {
     substance: "Something else",
     stage: "just-starting",
     startDays: 0,
-    createdAt: Date.now(),
+    createdAt: 0,
     trigger: "Evenings",
     doingItFor: "Myself",
     dailySpend: 0,
@@ -67,15 +67,40 @@ function Caregiver({
   linked?: boolean;
 }) {
   const router = useRouter();
-  const [events, setEvents] = useState<AnchorEvent[] | null>(null);
+  const [events, setEvents] = useState<RecoveryEvent[] | null>(null);
   const [coaching, setCoaching] = useState<{ text: string; meta: AiMeta } | null>(null);
   const [alerting, setAlerting] = useState(false);
   const [loadingCoach, setLoadingCoach] = useState(false);
-  const [activeAlert, setActiveAlert] = useState<AnchorEvent | null>(null);
+  const [activeAlert, setActiveAlert] = useState<RecoveryEvent | null>(null);
   const [notificationState, setNotificationState] = useState<
     NotificationPermission | "unsupported" | "unknown"
   >("unknown");
   const seen = useRef<Set<string>>(new Set());
+
+  const onSosAlert = useCallback(async () => {
+    setAlerting(true);
+    setLoadingCoach(true);
+    setCoaching(null);
+    try {
+      const data = await postJson<{ text: string; meta: AiMeta }>(
+        "/api/caregiver-script",
+        { profile },
+      );
+      setCoaching(data);
+    } catch {
+      setCoaching({
+        text: "SAY:\n- I'm here with you.\nAVOID:\n- Don't lecture right now.",
+        meta: {
+          provider: "offline",
+          modelId: "pre-written",
+          latencyMs: 0,
+          isOfflineFallback: true,
+        },
+      });
+    } finally {
+      setLoadingCoach(false);
+    }
+  }, [profile]);
 
   useEffect(() => {
     let active = true;
@@ -125,28 +150,7 @@ function Caregiver({
       active = false;
       unsub();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedName]);
-
-  async function onSosAlert() {
-    setAlerting(true);
-    setLoadingCoach(true);
-    setCoaching(null);
-    try {
-      const data = await postJson<{ text: string; meta: AiMeta }>(
-        "/api/caregiver-script",
-        { profile },
-      );
-      setCoaching(data);
-    } catch {
-      setCoaching({
-        text: "SAY:\n- I'm here with you.\nAVOID:\n- Don't lecture right now.",
-        meta: { provider: "offline", modelId: "pre-written", latencyMs: 0, isOfflineFallback: true },
-      });
-    } finally {
-      setLoadingCoach(false);
-    }
-  }
+  }, [onSosAlert, watchedName]);
 
   async function enableAlerts() {
     const state = await enableCaregiverAlerts();

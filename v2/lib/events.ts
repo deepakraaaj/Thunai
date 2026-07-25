@@ -7,26 +7,26 @@
 "use client";
 
 import { getSupabase, isSupabaseConfigured } from "./supabase";
-import type { AnchorEvent, EventType } from "./types";
+import type { RecoveryEvent, EventType } from "./types";
 
 const LOCAL_KEY = "thunai.events.v2";
 const LEGACY_KEY = "anchor.events.v1";
 const BUS = "thunai:event";
 
-function readLocal(): AnchorEvent[] {
+function readLocal(): RecoveryEvent[] {
   if (typeof window === "undefined") return [];
   try {
     const raw =
       window.localStorage.getItem(LOCAL_KEY) ??
       window.localStorage.getItem(LEGACY_KEY) ??
       "[]";
-    return JSON.parse(raw) as AnchorEvent[];
+    return JSON.parse(raw) as RecoveryEvent[];
   } catch {
     return [];
   }
 }
 
-function writeLocal(events: AnchorEvent[]): void {
+function writeLocal(events: RecoveryEvent[]): void {
   window.localStorage.setItem(LOCAL_KEY, JSON.stringify(events.slice(0, 100)));
   window.localStorage.removeItem(LEGACY_KEY);
 }
@@ -37,7 +37,7 @@ export async function logEvent(
   userName: string,
   payload: Record<string, unknown> = {},
 ): Promise<void> {
-  const evt: AnchorEvent = {
+  const evt: RecoveryEvent = {
     id: crypto.randomUUID(),
     type,
     user_name: userName,
@@ -61,11 +61,11 @@ export async function logEvent(
 
   const events = [evt, ...readLocal()];
   writeLocal(events);
-  window.dispatchEvent(new CustomEvent<AnchorEvent>(BUS, { detail: evt }));
+  window.dispatchEvent(new CustomEvent<RecoveryEvent>(BUS, { detail: evt }));
 }
 
 /** Fetch the recent event history (newest first). */
-export async function fetchEvents(userName: string): Promise<AnchorEvent[]> {
+export async function fetchEvents(userName: string): Promise<RecoveryEvent[]> {
   if (isSupabaseConfigured()) {
     try {
       const sb = getSupabase();
@@ -75,7 +75,7 @@ export async function fetchEvents(userName: string): Promise<AnchorEvent[]> {
         .eq("user_name", userName)
         .order("created_at", { ascending: false })
         .limit(50);
-      if (data) return data as AnchorEvent[];
+      if (data) return data as RecoveryEvent[];
     } catch {
       // fall through
     }
@@ -86,7 +86,7 @@ export async function fetchEvents(userName: string): Promise<AnchorEvent[]> {
 /** Subscribe to new events. Returns an unsubscribe fn. */
 export function subscribeEvents(
   userName: string,
-  onNew: (evt: AnchorEvent) => void,
+  onNew: (evt: RecoveryEvent) => void,
 ): () => void {
   if (isSupabaseConfigured()) {
     const sb = getSupabase();
@@ -96,7 +96,7 @@ export function subscribeEvents(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "events" },
         (payload) => {
-          const evt = payload.new as AnchorEvent;
+          const evt = payload.new as RecoveryEvent;
           if (evt.user_name === userName) onNew(evt);
         },
       )
@@ -107,7 +107,7 @@ export function subscribeEvents(
   }
 
   const handler = (e: Event) => {
-    const evt = (e as CustomEvent<AnchorEvent>).detail;
+    const evt = (e as CustomEvent<RecoveryEvent>).detail;
     if (evt.user_name === userName) onNew(evt);
   };
   window.addEventListener(BUS, handler);

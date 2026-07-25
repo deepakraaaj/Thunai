@@ -125,7 +125,7 @@ export interface SwapResponse {
 
 export type EventType = "sos" | "nearby-risk" | "checkin" | "slip" | "swap" | "okay";
 
-export interface AnchorEvent {
+export interface RecoveryEvent {
   id: string;
   type: EventType;
   user_name: string;

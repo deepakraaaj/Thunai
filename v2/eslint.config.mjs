@@ -6,13 +6,19 @@ export default defineConfig([
   ...nextVitals,
   ...nextTypeScript,
   {
+    // These client-only modules intentionally hydrate browser APIs or animate
+    // values after mount. Scope the exception to those files instead of
+    // weakening the rule for the whole application.
+    files: [
+      "app/caregiver/page.tsx",
+      "app/conversation/page.tsx",
+      "components/CountUp.tsx",
+      "components/RevealText.tsx",
+      "lib/use-profile.ts",
+      "lib/use-speech.ts",
+    ],
     rules: {
-      // Intentional client hydration, animation and browser-capability effects.
       "react-hooks/set-state-in-effect": "off",
-      "react-hooks/purity": "off",
-      // The caregiver subscription intentionally calls the latest function
-      // declared in the component body.
-      "react-hooks/immutability": "off",
     },
   },
   globalIgnores([".next/**", "node_modules/**", "next-env.d.ts"]),
