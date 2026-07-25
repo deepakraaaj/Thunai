@@ -70,20 +70,18 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
       synthRef.current.cancel();
     }
 
-    // Engine 1: Native Tamil Neural Audio Stream (Google TTS API)
+    // Server-side proxied TTS endpoint (Bypasses CORS 100%)
     if (langCode === "ta") {
       try {
-        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
-          text
-        )}&tl=ta&client=tw-ob`;
-        const audio = new Audio(ttsUrl);
+        const proxyUrl = `/api/tts?text=${encodeURIComponent(text)}&lang=ta`;
+        const audio = new Audio(proxyUrl);
         audio.playbackRate = 0.92;
         activeAudioRef.current = audio;
 
         audio.onplay = () => setIsSpeaking(true);
         audio.onended = () => setIsSpeaking(false);
         audio.onerror = () => {
-          console.warn("Audio stream blocked, using fallback synthesis");
+          console.warn("Proxy Audio stream error, using fallback synthesis");
           fallbackSpeechSynthesis(text, langCode);
         };
 
@@ -97,7 +95,6 @@ export const SosFlow: React.FC<Props> = ({ user, onClose }) => {
       }
     }
 
-    // Engine 2: Indian English synthesis
     fallbackSpeechSynthesis(text, langCode);
   }, []);
 
