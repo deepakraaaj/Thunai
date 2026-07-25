@@ -253,6 +253,11 @@ Thunai/Sahara identity selection, language locales, supporter-phone validation,
 location boundaries, conversation limits, multilingual safety fallbacks, and
 TTS constraints.
 
+The tested core currently reports **83.86% line coverage**, **84.62% branch
+coverage**, and **77.14% function coverage**. GitHub Actions runs lint with zero
+warnings, TypeScript, coverage, and the production build on every push and pull
+request.
+
 ## Demo flow
 
 1. Complete onboarding as Ravi.
